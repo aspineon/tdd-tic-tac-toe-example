@@ -22,15 +22,19 @@ public class TicTacToe {
     private Set<Integer> circleFields;
 
     public TicTacToe() {
-        this(new HashSet<>(), new HashSet<>());
+        this(Set.of(), Set.of());
     }
 
     public TicTacToe(Set<Integer> crossFields, Set<Integer> circleFields) {
-        if (!disjoint(crossFields, circleFields)) {
+        this.crossFields = new HashSet<>(crossFields);
+        this.circleFields = new HashSet<>(circleFields);
+        validateInitialGameState();
+    }
+
+    private void validateInitialGameState() {
+        if (!disjoint(crossFields, circleFields) || crossFields.size() + circleFields.size() >= BOARD_SIZE) {
             throw new IllegalArgumentException();
         }
-        this.crossFields = crossFields;
-        this.circleFields = circleFields;
     }
 
     public boolean isGameOver() {

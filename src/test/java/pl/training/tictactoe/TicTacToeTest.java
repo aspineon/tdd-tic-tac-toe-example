@@ -14,7 +14,8 @@ public class TicTacToeTest {
 
     @Test
     public void shouldEndGameWhenAllFieldsAreTaken() {
-        ticTacToe = new TicTacToe(Set.of(1, 3, 5, 8), Set.of(2, 4, 6, 7, 9));
+        ticTacToe = new TicTacToe(Set.of(1, 3, 5, 8), Set.of(2, 4, 6, 7));
+        ticTacToe.makeMove(9);
         assertTrue(ticTacToe.isGameOver());
     }
 
