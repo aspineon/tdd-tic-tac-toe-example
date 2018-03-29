@@ -1,67 +1,73 @@
 package pl.training.tictatctoe;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.disjoint;
+import static java.util.stream.Collectors.toSet;
+import static java.util.stream.Stream.concat;
+import static pl.training.tictatctoe.Player.CROSS;
 
 public class TicTacToe {
 
-    public static final int BOARD_SIZE = 9;
+    private static final int BOARD_SIZE = 9;
 
-    private static final List<List<Integer>> winningSequences = asList(
-            asList(1, 2, 3), asList(4, 5, 6), asList(7, 8, 9),
-            asList(1, 4, 7), asList(2, 5, 8), asList(3, 6, 9),
-            asList(1, 5, 9), asList(3, 5, 7));
+    private static final Set<Set<Integer>> winningSequences = Set.of(
+            Set.of(1, 2, 3), Set.of(4, 5, 6), Set.of(7, 8, 9),
+            Set.of(1, 4, 7), Set.of(2, 5, 8), Set.of(3, 6, 9),
+            Set.of(1, 5, 9), Set.of(3, 5, 7));
 
-    private int currentPlayer;
-    private List<Integer> firstPlayerFields;
-    private List<Integer> secondPlayerFields;
+    private Player player = CROSS;
+    private Set<Integer> crossFields;
+    private Set<Integer> circleFields;
 
-    public TicTacToe(List<Integer> firstPlayerFields, List<Integer> secondPlayerFields) {
-        this.firstPlayerFields = firstPlayerFields;
-        this.secondPlayerFields = secondPlayerFields;
+    public TicTacToe() {
+        this(new HashSet<>(), new HashSet<>());
+    }
+
+    public TicTacToe(Set<Integer> crossFields, Set<Integer> circleFields) {
+        if (!disjoint(crossFields, circleFields)) {
+            throw new IllegalArgumentException();
+        }
+        this.crossFields = crossFields;
+        this.circleFields = circleFields;
     }
 
     public boolean isGameOver() {
-        return allFieldsAreTaken() || hasWinningSequence();
-    }
-
-    private List<Integer> getCurrentPlayerFields() {
-        return currentPlayer == 0 ? firstPlayerFields : secondPlayerFields;
-    }
-
-    private List<Integer> getAllFields() {
-        List<Integer> fields = new ArrayList<>();
-        fields.addAll(firstPlayerFields);
-        fields.addAll(secondPlayerFields);
-        return fields;
+        return allFieldsAreTaken() || playerTookWinningSequence();
     }
 
     private boolean allFieldsAreTaken() {
-        return BOARD_SIZE - getAllFields().size() == 0;
+        return BOARD_SIZE - takenFields().size() == 0;
     }
 
-    private boolean hasWinningSequence() {
-        for (List<Integer> sequence: winningSequences) {
-            if (getCurrentPlayerFields().containsAll(sequence)) {
-                return true;
-            }
-        }
-        return false;
+    private Set<Integer> takenFields() {
+        return concat(crossFields.stream(), circleFields.stream()).collect(toSet());
     }
 
-    public boolean takeField(int field) {
-        if (getAllFields().contains(field)) {
+    private boolean playerTookWinningSequence() {
+        return winningSequences.stream().anyMatch(sequence -> playerFields().containsAll(sequence));
+    }
+
+    private Set<Integer> playerFields() {
+        return player == CROSS ? crossFields : circleFields;
+    }
+
+    public boolean makeMove(int field) {
+        if (isTaken(field)) {
             return false;
         }
-        getCurrentPlayerFields().add(field);
-        currentPlayer = currentPlayer == 0 ? 1 : 0;
+        playerFields().add(field);
+        player = player.reverse();
         return true;
     }
 
-    public int getCurrentPlayer() {
-        return currentPlayer;
+    private boolean isTaken(int field) {
+        return takenFields().contains(field);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
 }
