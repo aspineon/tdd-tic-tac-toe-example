@@ -1,5 +1,6 @@
 package pl.training.tictatctoe;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class TicTacToe {
     }
 
     private void validateInitialGameState() {
-        if (!disjoint(crossFields, circleFields) || crossFields.size() + circleFields.size() >= BOARD_SIZE) {
+        if (!disjoint(crossFields, circleFields) || takenFields().size() >= BOARD_SIZE) {
             throw new IllegalArgumentException();
         }
     }
@@ -72,6 +73,14 @@ public class TicTacToe {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Set<Integer> getCrossFields() {
+        return Collections.unmodifiableSet(crossFields);
+    }
+
+    public Set<Integer> getCircleFields() {
+        return Collections.unmodifiableSet(circleFields);
     }
 
 }
