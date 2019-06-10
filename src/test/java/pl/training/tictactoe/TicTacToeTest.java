@@ -1,12 +1,13 @@
 package pl.training.tictactoe;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import pl.training.tictatctoe.Player;
 import pl.training.tictatctoe.TicTacToe;
 
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 public class TicTacToeTest {
 
@@ -46,9 +47,9 @@ public class TicTacToeTest {
         assertEquals(ticTacToe.getPlayer(), player);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionWhenInitialGameStateIsInvalid() {
-        new TicTacToe(Set.of(1, 3, 5, 8), Set.of(1, 4, 6, 7, 9));
+        assertThrows(IllegalArgumentException.class, () -> new TicTacToe(Set.of(1, 3, 5, 8), Set.of(1, 4, 6, 7, 9)));
     }
 
 }
